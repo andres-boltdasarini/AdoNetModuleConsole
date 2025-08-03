@@ -11,7 +11,6 @@ namespace AdoNetLib
         static async Task Main(string[] args) // Асинхронная точка входа
         {
             var connector = new MainConnector();
-            var data = new DataTable();
 
             if (await connector.ConnectAsync())
             {
@@ -22,30 +21,34 @@ namespace AdoNetLib
 
                 Console.WriteLine("Получаем данные таблицы " + tablename);
 
-                data = db.SelectAll(tablename);
+                var reader = db.SelectAllCommandReader(tablename);
 
-                Console.WriteLine("Количество строк в " + tablename + ": " + data.Rows.Count);
+                if (reader != null)
+                {
+                    var columnList = new List<string>();
 
-                Console.WriteLine("Отключаем БД!");
-                connector.DisconnectAsync();
-                //if (await connector.ConnectAsync())
-                //{
-                //    Console.WriteLine("Количество строк в " + tablename + ": " + data.Rows.Count);
-                //}
-                foreach (DataColumn column in data.Columns)
-                {
-                    Console.Write($"{column.ColumnName}\t");
-                }
-                Console.WriteLine();
-                foreach (DataRow row in data.Rows)
-                {
-                    var cells = row.ItemArray;
-                    foreach (var cell in cells)
+                    for (int i = 0; i < reader.FieldCount; i++)
                     {
-                        Console.Write($"{cell}\t");
+                        var name = reader.GetName(i);
+                        columnList.Add(name);
+                    }
+                    for (int i = 0; i < columnList.Count; i++)
+                    {
+                        Console.Write($"{columnList[i]}\t");
                     }
                     Console.WriteLine();
+                    while (reader.Read())
+                    {
+                        for (int i = 0; i < columnList.Count; i++)
+                        {
+                            var value = reader[columnList[i]];
+                            Console.Write($"{value}\t");
+                        }
+
+                        Console.WriteLine();
+                    }
                 }
+
             }
             else
             {

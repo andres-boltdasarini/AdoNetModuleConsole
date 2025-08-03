@@ -16,17 +16,24 @@ namespace AdoNetLib
             this.connector = connector;
         }
 
-    
-        public DataTable SelectAll(string table)
+
+        public SqlDataReader SelectAllCommandReader(string table)
         {
-            var selectcommandtext = "select * from " + table;
-            var adapter = new SqlDataAdapter(
-              selectcommandtext,
-              connector.GetConnection()
-            );
-            var ds = new DataSet();
-            adapter.Fill(ds);
-            return ds.Tables[0];
+            var command = new SqlCommand
+            {
+                CommandType = CommandType.Text,
+                CommandText = "select * from " + table,
+                Connection = connector.GetConnection(),
+            };
+
+            SqlDataReader reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                return reader;
+            }
+
+            return null;
         }
 
     }
