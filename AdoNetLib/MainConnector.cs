@@ -11,23 +11,37 @@ namespace AdoNetLib
 
         public async Task<bool> ConnectAsync()
         {
+            bool result;
             try
             {
                 connection = new SqlConnection(ConnectionString.MsSqlConnection);
                 await connection.OpenAsync();
-                return true;
+                result = true;
             }
             catch
             {
-                return false;
+                result = false;
             }
+
+            return result;
         }
 
-        public async Task DisconnectAsync() // Заменяем void на Task
+        public async void DisconnectAsync()
         {
-            if (connection != null && connection.State == ConnectionState.Open)
+            if (connection.State == ConnectionState.Open)
             {
                 await connection.CloseAsync();
+            }
+        }
+        public SqlConnection GetConnection()
+        {
+            if (connection.State == ConnectionState.Open)
+            {
+                return connection;
+            }
+            else
+            {
+                throw new Exception("Подключение уже закрыто!");
             }
         }
     }
