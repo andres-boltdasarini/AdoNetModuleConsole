@@ -26,7 +26,9 @@ namespace AdoNetLib
             return result;
         }
 
-        public async void DisconnectAsync()
+        public async
+        Task
+DisconnectAsync()
         {
             if (connection.State == ConnectionState.Open)
             {

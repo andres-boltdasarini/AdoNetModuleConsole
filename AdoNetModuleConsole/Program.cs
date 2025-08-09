@@ -16,9 +16,9 @@ namespace AdoNetModuleConsole
             show
         }
 
-        static void Main(string[] args) 
+        static async Task Main(string[] args) // Асинхронная точка входа
         {
-            manager.Connect();
+            await manager.ConnectAsync();
             manager.ShowData();
 
             Console.WriteLine("Список команд для работы консоли:");
@@ -53,7 +53,7 @@ namespace AdoNetModuleConsole
             } 
             while (command != nameof(Commands.stop));
 
-            manager.Disconnect();
+            await manager.DisconnectAsync();
             Console.ReadKey();
         }
 
@@ -77,7 +77,7 @@ namespace AdoNetModuleConsole
 
         static void Update() 
         {
-            Console.WriteLine("Введите логин для обновления:");
+            Console.WriteLine("Введите логин для обновления имени:");
             var login = Console.ReadLine();
             Console.WriteLine("Введите имя для обновления:");
             var name = Console.ReadLine();

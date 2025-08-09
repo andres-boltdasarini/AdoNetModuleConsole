@@ -49,22 +49,20 @@ namespace AdoNetLib
 
 }
 
-public int ExecProcedureAdding(string name, string login) 
-{
-  var command = new SqlCommand 
-  {
-    CommandType = CommandType.StoredProcedure,
-      CommandText = "AddingUserProc",
-      Connection = connector.GetConnection(),
-  };
+        public int AddUser(string tableName, string name, string login)
+        {
+            using var command = new SqlCommand(
+                $"INSERT INTO {tableName} (Name, Login) VALUES (@name, @login)",
+                connector.GetConnection()
+            );
 
-  command.Parameters.Add(new SqlParameter("@Name", name));
-  command.Parameters.Add(new SqlParameter("@Login", login));
+            command.Parameters.AddWithValue("@name", name);
+            command.Parameters.AddWithValue("@login", login);
 
-  return command.ExecuteNonQuery();
-}
+            return command.ExecuteNonQuery();
+        }
 
-public int UpdateByColumn(string table, string columntocheck, string valuecheck, string columntoupdate, string valueupdate) 
+        public int UpdateByColumn(string table, string columntocheck, string valuecheck, string columntoupdate, string valueupdate) 
 {
   var command = new SqlCommand 
   {

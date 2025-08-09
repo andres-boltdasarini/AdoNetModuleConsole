@@ -11,7 +11,7 @@ public class Manager
 
 public Manager() 
 {
-  connector = new MainConnector();
+ connector = new MainConnector();
 
   userTable = new Table();
   userTable.Name = "NetworkUser";
@@ -22,29 +22,21 @@ public Manager()
 
 }
 
-  public void Connect() 
-  {
-    var result = connector.ConnectAsync();
-
-    if (result.Result) 
+    public async Task ConnectAsync()
     {
-      Console.WriteLine("Подключено успешно!");
-
-      dbExecutor = new DbExecutor(connector);
-    } 
-    else 
-    {
-      Console.WriteLine("Ошибка подключения!");
+        bool success = await connector.ConnectAsync();
+        if (success)
+        {
+            dbExecutor = new DbExecutor(connector);
+        }
     }
-  }
 
-  public void Disconnect() 
-  {
-    Console.WriteLine("Отключаем БД!");
-    connector.DisconnectAsync();
-  }
+    public async Task DisconnectAsync()
+    {
+        await connector.DisconnectAsync();
+    }
 
-public void ShowData() 
+    public void ShowData() 
 {
     var tablename = "NetworkUser";
 
@@ -89,10 +81,10 @@ public void ShowData()
   return dbExecutor.UpdateByColumn(userTable.Name, userTable.ImportantField, value, userTable.Fields[2], newvalue);
 }
 
-  public void AddUser(string name, string login) 
- {
-   dbExecutor.ExecProcedureAdding(name, login);
- }
+    public void AddUser(string name, string login)
+    {
+        dbExecutor.AddUser(userTable.Name, name, login);
+    }
 
 
 
